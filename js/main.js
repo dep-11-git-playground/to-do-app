@@ -5,11 +5,26 @@ function initializeToolTips(){
 
 initializeToolTips();
 
+const btnAddElm = document.querySelector('#btn-add');
+const txtTaskElm = document.querySelector('#txt-task');
+let lastTaskId = 0;
+let selectedTask = null;
+
 class TaskItem {
     id;
     checked;
-    description;
+    #description;
     #liElm;
+
+    get description(){
+        return this.#description;
+    }
+
+    set description(value){
+        this.#description = value;
+        if (this.#liElm)
+            this.#liElm.querySelector('label').innerText = value;
+    }
 
     constructor(id, description, checked = false){
         this.id = id;
@@ -18,6 +33,12 @@ class TaskItem {
         this.#liElm = this.addItemToList();
         this.#liElm.querySelector(".delete").addEventListener('click', ()=>{
             this.#liElm.remove();
+        });
+        this.#liElm.querySelector(".edit").addEventListener('click', ()=>{
+            txtTaskElm.value = this.description;
+            btnAddElm.innerText = "UPDATE";
+            txtTaskElm.focus();
+            selectedTask = this;
         });
     }
 
@@ -49,14 +70,16 @@ class TaskItem {
     }
 }
 
-const btnAddElm = document.querySelector('#btn-add');
-const txtTaskElm = document.querySelector('#txt-task');
-let lastTaskId = 0;
-
 btnAddElm.addEventListener('click', ()=> {
     const text = txtTaskElm.value.trim();
     if (text){
-        new TaskItem(lastTaskId++, text);
+        if (selectedTask !== null){
+            selectedTask.description = text;
+            selectedTask = null;
+            btnAddElm.innerText = "ADD";
+        }else{
+            new TaskItem(lastTaskId++, text);
+        }
         txtTaskElm.value = '';
         txtTaskElm.focus();
     }else {
