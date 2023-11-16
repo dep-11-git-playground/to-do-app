@@ -35,6 +35,15 @@ ul > li .edit:hover {
 }
 
 main{
-    overflow: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 }
+
+main::-webkit-scrollbar-thumb {
+    background: rgb(0, 162, 255);
+  }
+
+main::-webkit-scrollbar {
+    width: 8px;
+    background-color: #cccccc;
+  }
