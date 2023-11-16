@@ -66,6 +66,7 @@ class TaskItem {
             </div>          
         `;
         ulElm.prepend(liElm);
+        initializeToolTips();
         return liElm;
     }
 }
