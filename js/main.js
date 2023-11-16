@@ -6,13 +6,19 @@ function initializeToolTips(){
 initializeToolTips();
 
 class TaskItem {
+    id;
     checked;
     description;
+    #liElm;
 
-    constructor(checked, description){
+    constructor(id, description, checked = false){
+        this.id = id;
         this.checked = checked;
         this.description = description;
-        this.addItemToList();
+        this.#liElm = this.addItemToList();
+        this.#liElm.querySelector(".delete").addEventListener('click', ()=>{
+            this.#liElm.remove();
+        });
     }
 
     addItemToList(){
@@ -21,9 +27,10 @@ class TaskItem {
         liElm.className = 'd-flex align-items-center justify-content-between py-2 px-3';
         liElm.innerHTML = `
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="chk-1">
-                <label class="form-check-label" for="chk-1">
-                    Design Wireframes in Figma
+                <input ${this.checked ? 'checked' : ''} 
+                    class="form-check-input" type="checkbox" value="" id="chk-${this.id}">
+                <label class="form-check-label" for="chk-${this.id}">
+                    ${this.description}
                 </label>
             </div>
             <div class="d-flex gap-3 fs-5">
@@ -38,7 +45,26 @@ class TaskItem {
             </div>          
         `;
         ulElm.prepend(liElm);
+        return liElm;
     }
 }
 
-new TaskItem();
+const btnAddElm = document.querySelector('#btn-add');
+const txtTaskElm = document.querySelector('#txt-task');
+let lastTaskId = 0;
+
+btnAddElm.addEventListener('click', ()=> {
+    const text = txtTaskElm.value.trim();
+    if (text){
+        new TaskItem(lastTaskId++, text);
+        txtTaskElm.value = '';
+        txtTaskElm.focus();
+    }else {
+        txtTaskElm.focus();
+        txtTaskElm.select();
+    }
+});
+
+txtTaskElm.addEventListener('keypress', (e)=>{
+    if (e.key === "Enter") btnAddElm.click();
+});
